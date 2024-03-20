@@ -11,25 +11,20 @@ void processInput(GLFWwindow* window);
 //shader do vertices do objeto
 const char* vertexShaderSource = "#version 330 core\n"
 "layout (location = 0) in vec3 aPos;\n"
+"out vec4 vertexColor;"
 "void main()\n"
 "{\n"
 "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0f);\n"
+"	vertexColor = vec4(0.5, 0.0, 0.0, 1.0);"
 "}\0";
 
-//shader da cor laranja
-const char* fragmentShaderSourceOrange = "#version 330 core\n"
+//shader de fragmento de cor
+const char* fragmentShaderSource = "#version 330 core\n"
 "out vec4 FragColor;\n"
+"in vec4 vertexColor;\n"
 "void main()\n"
 "{\n"
-"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-"}\0";
-
-//shader da cor amarela
-const char* fragmentShaderSourceYellow = "#version 330 core\n"
-"out vec4 FragColor;\n"
-"void main()\n"
-"{\n"
-"   FragColor = vec4(1.0f, 1.0f, 0.0f, 1.0f);\n"
+"   FragColor = vertexColor;\n"
 "}\0";
 
 int main()
@@ -76,18 +71,11 @@ int main()
 
 	//declaraçãp dos vertices do nosso objeto em uma array de float
 	
-	//vertices do primeiro triangulo
-	float triangle_one[] = {
-		-0.75f, -0.25f, 0.0f,
-		-0.25f, -0.25f, 0.0f,
-		-0.5f, 0.25f, 0.0f
-	};
-
-	//vertices do secundo triangulo
-	float triangle_two[] = {
-		0.25f, -0.25f, 0.0f,
-		0.75f, -0.25f, 0.0f,
-		0.50f, 0.25f, 0.0f
+	//vertices do triangulo
+	float triangle[] = {
+		-0.5f, -0.5f, 0.0f,
+		0.5f, -0.5f, 0.0f,
+		0.0f, 0.5f, 0.0f
 	};
 
 	//declaração de variaveis que seram usadas no log
@@ -95,12 +83,12 @@ int main()
 	char infoLog[512];
 
 	//declaração de dois VBOs(Vertex Buffer Object)
-	unsigned int VBOs[2];
-	glGenBuffers(2, VBOs);
+	unsigned int VBOs[1];
+	glGenBuffers(1, VBOs);
 
 	//declaração de duas VAOs(Vertex Array Object)
-	unsigned int VAOs[2];
-	glGenVertexArrays(2, VAOs);
+	unsigned int VAOs[1];
+	glGenVertexArrays(1, VAOs);
 
 	//selecionando a array atual como a VAO[0]
 	glBindVertexArray(VAOs[0]);
@@ -109,21 +97,8 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
 
 	//definindo os dados do VBOs[0] com os vertices do triangle_one e definindo seu tipo
-	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_one), triangle_one, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle), triangle, GL_STATIC_DRAW);
 	
-	//definindo o tipo e o tamanho de cada vertice na memoria do VAOs[0]
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	//selecionando a array atual como a VAOs[1]
-	glBindVertexArray(VAOs[1]);
-
-	//ligando o objeto de vertice VBOs[1] ao objeto de array atual(VAO[1])
-	glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
-
-	//definindo os dados do VBOs[1] com os vertices do triangle_two e definindo seu tipo
-	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_two), triangle_two, GL_STATIC_DRAW);
-
 	//definindo o tipo e o tamanho de cada vertice na memoria do VAOs[0]
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
@@ -146,84 +121,48 @@ int main()
 		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 
-	//declarando o shader de framento
-	unsigned int fragmentShaderOrange, fragmentShaderYellow;
-	fragmentShaderOrange = glCreateShader(GL_FRAGMENT_SHADER);
+	//declarando o shader de fragmento
+	unsigned int fragmentShader;
+	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 
 	//ligando o codigo fonte do shader de fragmento
-	glShaderSource(fragmentShaderOrange, 1, &fragmentShaderSourceOrange, NULL);
+	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
 
 	//compilando o shader de fragmento
-	glCompileShader(fragmentShaderOrange);
+	glCompileShader(fragmentShader);
 
 	//gera uma mensagem de erro caso a compilação do shader de errado
-	glGetShaderiv(fragmentShaderOrange, GL_COMPILE_STATUS, &success);
+	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
-		glGetShaderInfoLog(fragmentShaderOrange, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-	}
-
-
-	fragmentShaderYellow = glCreateShader(GL_FRAGMENT_SHADER);
-
-	//ligando o codigo fonte do shader de fragmento
-	glShaderSource(fragmentShaderYellow, 1, &fragmentShaderSourceYellow, NULL);
-
-	//compilando o shader de fragmento
-	glCompileShader(fragmentShaderYellow);
-
-	//gera uma mensagem de erro caso a compilação do shader de errado
-	glGetShaderiv(fragmentShaderYellow, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(fragmentShaderOrange, 512, NULL, infoLog);
+		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
 		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 
 	//declarando programas de shaders
-	unsigned int shaderProgramOrange, shaderProgramYellow;
+	unsigned int shaderProgram;
 
-	//criando o programa do shader laranja
-	shaderProgramOrange = glCreateProgram();
+	//criando o programa do shader
+	shaderProgram = glCreateProgram();
 
-	//adicionando os shaders criados ao programa de shader laranja
-	glAttachShader(shaderProgramOrange, vertexShader);
-	glAttachShader(shaderProgramOrange, fragmentShaderOrange);
+	//adicionando os shaders criados ao programa de shader
+	glAttachShader(shaderProgram, vertexShader);
+	glAttachShader(shaderProgram, fragmentShader);
 
-	//ligando os shaders ao programa de shader laranja
-	glLinkProgram(shaderProgramOrange);
-
-	//gera uma mensagem de erro caso a ligação de errado
-	glGetShaderiv(shaderProgramOrange, GL_LINK_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(shaderProgramOrange, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
-	}
-
-	//criando o programa do shader amarelo
-	shaderProgramYellow = glCreateProgram();
-
-	//adicionando os shaders criados ao programa de shader amarelo
-	glAttachShader(shaderProgramYellow, vertexShader);
-	glAttachShader(shaderProgramYellow, fragmentShaderYellow);
-
-	//ligando os shaders ao programa de shader amarelo
-	glLinkProgram(shaderProgramYellow);
+	//ligando os shaders ao programa de shader
+	glLinkProgram(shaderProgram);
 
 	//gera uma mensagem de erro caso a ligação de errado
-	glGetShaderiv(shaderProgramYellow, GL_LINK_STATUS, &success);
+	glGetShaderiv(shaderProgram, GL_LINK_STATUS, &success);
 	if (!success)
 	{
-		glGetShaderInfoLog(shaderProgramYellow, 512, NULL, infoLog);
+		glGetShaderInfoLog(shaderProgram, 512, NULL, infoLog);
 		std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
 	}
 
 	//deleta os shaders de vertices e de fragmentos apos a ligação deles ao programa
 	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShaderOrange);
-	glDeleteShader(fragmentShaderYellow);
+	glDeleteShader(fragmentShader);
 
 	//loop de renderização
 	while (!glfwWindowShouldClose(window))
@@ -237,8 +176,8 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		//seleciona o programa de shaders com a cor laranja
-		glUseProgram(shaderProgramOrange);
+		//seleciona o programa de shaders
+		glUseProgram(shaderProgram);
 
 		//selecionando a array atual como a VAOs[0]
 		glBindVertexArray(VAOs[0]);
@@ -247,30 +186,17 @@ int main()
 		//começando pelo valor 0 e possuindo 3 vertices
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
-
-		//seleciona o programa de shaders com a cor amarela
-		glUseProgram(shaderProgramYellow);
-		
-		//selecionando a array atual como a VAOs[1]
-		glBindVertexArray(VAOs[1]);
-
-		//desenha um triangulo com as informação da array atual 
-		//começando pelo valor 0 e possuindo 3 vertices
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-		
-
 		//checa e chama eventos e troca os buffers
 		glfwPollEvents();
 		glfwSwapBuffers(window);
 	}
 
 	//deleta os buffers VAOs e VBOs
-	glDeleteVertexArrays(2, VAOs);
-	glDeleteBuffers(2, VBOs);
+	glDeleteVertexArrays(1, VAOs);
+	glDeleteBuffers(1, VBOs);
 
 	//deleta o programa de shaders
-	glDeleteProgram(shaderProgramOrange);
-	glDeleteProgram(shaderProgramYellow);
+	glDeleteProgram(shaderProgram);
 
 	//fecha a janela
 	glfwTerminate();
