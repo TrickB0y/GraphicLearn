@@ -32,7 +32,7 @@ int main()
 	//inicia o glfw
 	glfwInit();
 
-	//configura a vers„o do opengl
+	//configura a vers√£o do opengl
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -40,10 +40,10 @@ int main()
 	//	caso seja para um sistema MacOs essa linha deve ser inserida
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPACT, GL_TRUE);
 
-	//declaraÁ„o da janela
+	//declara√ß√£o da janela
 	GLFWwindow* window = glfwCreateWindow(800, 600, "Glfw window", NULL, NULL);
 
-	//mensagem de erro caso a janela n„o seja criada
+	//mensagem de erro caso a janela n√£o seja criada
 	if (window == NULL)
 	{
 		std::cout << "failed to create GLFW window" << std::endl;
@@ -65,11 +65,11 @@ int main()
 	//especifica o tamanho da render dentro da janela
 	glViewport(0, 0, 800, 600);
 
-	//fuÁ„o que muda o tamanho da render de acordo com a janela
+	//fun√ß√£o que muda o tamanho da render de acordo com a janela
 	//toda vez que ela for redimencionada
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-	//declaraÁ„p dos vertices do nosso objeto em uma array de float
+	//declara√ß√£o dos vertices do nosso objeto em uma array de float
 	
 	//vertices do triangulo
 	float triangle[] = {
@@ -78,15 +78,15 @@ int main()
 		0.0f, 0.5f, 0.0f
 	};
 
-	//declaraÁ„o de variaveis que seram usadas no log
+	//declara√ß√£o de variaveis que seram usadas no log
 	int success;
 	char infoLog[512];
 
-	//declaraÁ„o de dois VBOs(Vertex Buffer Object)
+	//declara√ß√£o de dois VBOs(Vertex Buffer Object)
 	unsigned int VBOs[1];
 	glGenBuffers(1, VBOs);
 
-	//declaraÁ„o de duas VAOs(Vertex Array Object)
+	//declara√ß√£o de duas VAOs(Vertex Array Object)
 	unsigned int VAOs[1];
 	glGenVertexArrays(1, VAOs);
 
@@ -113,7 +113,7 @@ int main()
 	//compilando o shader de vertice
 	glCompileShader(vertexShader);
 
-	//gera uma mensagem de erro caso a compilaÁ„o do shader de errado
+	//gera uma mensagem de erro caso a compila√ß√£o do shader de errado
 	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
@@ -131,7 +131,7 @@ int main()
 	//compilando o shader de fragmento
 	glCompileShader(fragmentShader);
 
-	//gera uma mensagem de erro caso a compilaÁ„o do shader de errado
+	//gera uma mensagem de erro caso a compila√ß√£o do shader de errado
 	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
@@ -152,7 +152,7 @@ int main()
 	//ligando os shaders ao programa de shader
 	glLinkProgram(shaderProgram);
 
-	//gera uma mensagem de erro caso a ligaÁ„o de errado
+	//gera uma mensagem de erro caso a liga√ß√£o de errado
 	glGetShaderiv(shaderProgram, GL_LINK_STATUS, &success);
 	if (!success)
 	{
@@ -160,17 +160,19 @@ int main()
 		std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
 	}
 
-	//deleta os shaders de vertices e de fragmentos apos a ligaÁ„o deles ao programa
+	//deleta os shaders de vertices e de fragmentos apos a liga√ß√£o deles ao programa
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
-	//loop de renderizaÁ„o
+	//loop de renderiza√ß√£o
 	while (!glfwWindowShouldClose(window))
 	{
-		//precessa as entradas inseridas na janela em quest„o
+		//precessa as entradas inseridas na janela em quest√£o
 		processInput(window);
 
-		//	comandos de renderizaÁ„o
+		//
+		//	comandos de renderiza√ß√£o
+		//
 
 		//define a cor e renderiza todo o fundo como a cor definida
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -182,8 +184,8 @@ int main()
 		//selecionando a array atual como a VAOs[0]
 		glBindVertexArray(VAOs[0]);
 
-		//desenha um triangulo com as informaÁ„o da array atual 
-		//comeÁando pelo valor 0 e possuindo 3 vertices
+		//desenha um triangulo com as informa√ß√£o da array atual 
+		//comeÔøΩando pelo valor 0 e possuindo 3 vertices
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		//checa e chama eventos e troca os buffers
@@ -204,13 +206,13 @@ int main()
 }
 
 
-//funÁ„o que monitora quando a janela È redimencionada e redimensiona o tamanho da renderizaÁ„o
+//fun√ß√£o que monitora quando a janela √© redimencionada e redimensiona o tamanho da renderiza√ß√£o
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
 }
 
-//funÁ„o que processa as entradas do teclando quando manipula a janela em quest„o
+//fun√ß√£o que processa as entradas do teclando quando manipula a janela em quest√£o
 void processInput(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
