@@ -80,15 +80,15 @@ int main()
 	int success;
 	char infoLog[512];
 
-	//declaração de dois VBOs(Vertex Buffer Object)
+	//declaração de um VBOs(Vertex Buffer Objects) obs: pode ter mais de um
 	unsigned int VBOs[1];
 	glGenBuffers(1, VBOs);
 
-	//declaração de duas VAOs(Vertex Array Object)
+	//declaração de um VAOs(Vertex Array Objects) obs: pode ter mais de um
 	unsigned int VAOs[1];
 	glGenVertexArrays(1, VAOs);
 
-	//selecionando a array atual como a VAO[0]
+	//selecionando a array atual como a VAOs[0]
 	glBindVertexArray(VAOs[0]);
 
 	//ligando o objeto de vertice VBOs[0] ao objeto de array atual(VAO[0])
@@ -97,7 +97,9 @@ int main()
 	//definindo os dados do VBOs[0] com os vertices do triangle_one e definindo seu tipo
 	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle), triangle, GL_STATIC_DRAW);
 	
-	//definindo o tipo e o tamanho de cada vertice na memoria do VAOs[0]
+	//a função glVertexAttribPointer define o tipo, tamanho e local de cada vertice na 
+	//memoria do VAOs[0](array de objetos de vertice); no caso os atributos são do tipo
+	//float, cada na vertice terá 3 atributos (eixo x, y, z)
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
