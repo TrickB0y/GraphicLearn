@@ -11,20 +11,18 @@ void processInput(GLFWwindow* window);
 //shader do vertices do objeto
 const char* vertexShaderSource = "#version 330 core\n"
 "layout (location = 0) in vec3 aPos;\n"
-"out vec4 vertexColor;"
 "void main()\n"
 "{\n"
 "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0f);\n"
-"	vertexColor = vec4(0.5, 0.0, 0.0, 1.0);"
 "}\0";
 
 //shader de fragmento de cor
 const char* fragmentShaderSource = "#version 330 core\n"
 "out vec4 FragColor;\n"
-"in vec4 vertexColor;\n"
+"uniform vec4 ourColor;\n"
 "void main()\n"
 "{\n"
-"   FragColor = vertexColor;\n"
+"   FragColor = ourColor;\n"
 "}\0";
 
 int main()
@@ -178,14 +176,31 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		//variavel com valor dada por uma função que pega o valor do tempo
+		float timeValue = glfwGetTime();
+
+		//variavel variavel que muda seu valor entre 0.0f e 1.0f enquanto o tempo passa
+		float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
+
+		//variavel que armazena o local aonde a variavel uniform com o nome ourColor está
+		//dentro do programa de shaders
+		int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+
 		//seleciona o programa de shaders
 		glUseProgram(shaderProgram);
+
+		//função que atribui 4 valores de ponto flutuante a variavel selecionada.
+		//no caso a variavel vertexColorLocation guarda o local da variavel ourColor, e
+		//ourColor é do tipo vec4 e precisa de 4 valores do tipo float.
+		//a variavel greenValue esta no lugar do valor verde muda constantemente ao passar
+		//do tempo.
+		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 
 		//selecionando a array atual como a VAOs[0]
 		glBindVertexArray(VAOs[0]);
 
 		//desenha um triangulo com as informação da array atual 
-		//come�ando pelo valor 0 e possuindo 3 vertices
+		//começando pelo valor 0 e possuindo 3 vertices
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		//checa e chama eventos e troca os buffers
