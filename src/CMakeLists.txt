@@ -1,6 +1,3 @@
-include_directories("${GraphicLearn_SOURCE_DIR}/glfw/include/"
-					"${GraphicLearn_SOURCE_DIR}/glad/include/")
-					
 link_directories("${MyProject_SOURCE_DIR}/glad/src"
 				"${MyProject_SOURCE_DIR}/glfw/src")
 
