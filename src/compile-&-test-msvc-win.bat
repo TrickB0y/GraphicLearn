@@ -2,6 +2,8 @@ cd ..
 
 cmake --build .
 
+mkdir "test-dir"
+
 cd test-dir
 
 del /F /Q *
