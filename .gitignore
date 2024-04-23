@@ -1,8 +1,14 @@
+.vs/
 .vscode/
 CMakeFiles/
+x64/
 Debug/
+Release/
+test-dir/
+GraphicLearn.dir
 CMakeCache*
 *.cmake
 *.vcxproj
 *.sln
 *.filters
+*.user
