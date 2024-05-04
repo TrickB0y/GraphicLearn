@@ -61,9 +61,17 @@ int main()
 	//vertices do triangulo
 	float triangle[] = {
         // posições         // cores
-         0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  // base direita
-        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // base esquerda
-         0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // topo
+    	-0.5f, 0.5f, 0.0f,	1.0f, 0.0f, 0.0f,	// topo esquerda
+        0.5f, 0.5f, 0.0f,	0.0f, 1.0f, 0.0f,	// topo direita
+        0.5f, -0.5f, 0.0f,	0.0f, 0.0f, 1.0f,   // base direita
+		-0.5f, -0.5, 0.0f,	1.0f, 0.0f, 1.0f	// base esquerda
+	};
+
+	// indice dos vertices que precisão ser repitidos para gerar 
+	// triangulos diferentes
+	unsigned int indices[] = {
+		0, 1, 3,
+		1, 2, 3
 	};
 
 	//declaração de variaveis que seram usadas no log
@@ -78,15 +86,25 @@ int main()
 	unsigned int VAOs[1];
 	glGenVertexArrays(1, VAOs);
 
-	//selecionando a array atual como a VAOs[0]
+	//declaração de um EBOs(Element Buffer Objects) obs: pode ter mais de um
+	unsigned int EBOs[1];
+	glGenBuffers(1, EBOs);
+
+	//selecionando a array de vertices atual como a VAOs[0]
 	glBindVertexArray(VAOs[0]);
 
 	//ligando o objeto de vertice VBOs[0] ao objeto de array atual(VAO[0])
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
 
-	//definindo os dados do VBOs[0] com os vertices do triangle_one e definindo seu tipo
+	//ligando o objeto de indice EBOs[0] ao objeto de array atual(VAO[0])
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[0]);
+
+	//definindo os dados do VBOs[0] com os vertices do triangle e definindo seu tipo
 	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle), triangle, GL_STATIC_DRAW);
 	
+	//definindo os dados do EBOs[0] com os indices(obs: indices de vertices da array triangle) e definindo seu tipo
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
 	//a função glVertexAttribPointer define o tipo, tamanho e local de cada vertice na 
 	//memoria do VAOs[0](array de objetos de vertice); no caso os atributos são do tipo
 	//float, cada na vertice terá 3 atributos (eixo x, y, z)
@@ -120,9 +138,15 @@ int main()
 		//selecionando a array atual como a VAOs[0]
 		glBindVertexArray(VAOs[0]);
 
-		//desenha um triangulo com as informação da array atual 
-		//começando pelo valor 0 e possuindo 3 vertices
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		// Desenha elementos no caso triangulos(GL_TRIANGLES) como o objeto
+		// renderizado é um quadrado possui 2 triangulos triangulos possuem
+		// 3 vertices logo o total de vertices é 6.
+
+		// obs: apenas os vertices das pontas do quadrado são definidas no 
+		// objeto, para evitar repetição um objeto buffer de elemento com 
+		// os vertices que precisão ser repetidos repetem os vertices 
+		// necessarios
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		//checa e chama eventos e troca os buffers
 		glfwPollEvents();
@@ -132,6 +156,7 @@ int main()
 	//deleta os buffers VAOs e VBOs
 	glDeleteVertexArrays(1, VAOs);
 	glDeleteBuffers(1, VBOs);
+	glDeleteBuffers(1, EBOs);
 
 	//deleta o programa de shaders
 
